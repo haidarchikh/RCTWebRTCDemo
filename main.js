@@ -14,7 +14,7 @@ import {
 
 import io from 'socket.io-client';
 
-const socket = io.connect('https://react-native-webrtc.herokuapp.com', {transports: ['websocket']});
+const socket = io.connect('https://webrtc.optimaltaxi.com', {transports: ['websocket']});
 
 import {
   RTCPeerConnection,
@@ -25,9 +25,21 @@ import {
   MediaStreamTrack,
   getUserMedia,
 } from 'react-native-webrtc';
+var numbIceServer = [
+  {
+    url: 'stun:numb.viagenie.ca',
+    credential: 'qwertyuio',
+    username: 'haidar.chikh@xarepo.com'
+  },
+  {
+    url: 'turn:numb.viagenie.ca',
+    credential: 'qwertyuio',
+    username: 'haidar.chikh@xarepo.com'
+  }];
+
 
 const configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
-
+configuration.iceServers = numbIceServer;
 const pcPeers = {};
 let localStream;
 
@@ -41,7 +53,7 @@ function getLocalStream(isFront, callback) {
     MediaStreamTrack.getSources(sourceInfos => {
       console.log("sourceInfos: ", sourceInfos);
 
-      for (const i = 0; i < sourceInfos.length; i++) {
+      for (let i = 0; i < sourceInfos.length; i++) {
         const sourceInfo = sourceInfos[i];
         if(sourceInfo.kind == "video" && sourceInfo.facing == (isFront ? "front" : "back")) {
           videoSourceId = sourceInfo.id;
@@ -309,7 +321,7 @@ const RCTWebRTCDemo = React.createClass({
         <ListView
           dataSource={this.ds.cloneWithRows(this.state.textRoomData)}
           renderRow={rowData => <Text>{`${rowData.user}: ${rowData.message}`}</Text>}
-          />
+        />
         <TextInput
           style={{width: 200, height: 30, borderColor: 'gray', borderWidth: 1}}
           onChangeText={value => this.setState({textRoomValue: value})}
